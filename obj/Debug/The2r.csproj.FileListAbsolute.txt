@@ -1,0 +1,17 @@
+C:\Users\scott.carnegie.ORANGUTECH\Source\Workspaces\Workspace\The 2r\The2r\obj\Debug\The2r.csprojResolveAssemblyReference.cache
+C:\Users\scott.carnegie.ORANGUTECH\Source\Workspaces\Workspace\The 2r\The2r\obj\Debug\The2r.Migrations.FirstMigration.resources
+C:\Users\scott.carnegie.ORANGUTECH\Source\Workspaces\Workspace\The 2r\The2r\obj\Debug\The2r.Migrations.ActivitiesAndTypes.resources
+C:\Users\scott.carnegie.ORANGUTECH\Source\Workspaces\Workspace\The 2r\The2r\obj\Debug\The2r.Migrations.ActivityTypes.resources
+C:\Users\scott.carnegie.ORANGUTECH\Source\Workspaces\Workspace\The 2r\The2r\obj\Debug\The2r.Migrations.UpdateActivity.resources
+C:\Users\scott.carnegie.ORANGUTECH\Source\Workspaces\Workspace\The 2r\The2r\obj\Debug\The2r.Migrations.UserPropertiesAdded.resources
+C:\Users\scott.carnegie.ORANGUTECH\Source\Workspaces\Workspace\The 2r\The2r\obj\Debug\The2r.Migrations.ModifiedOnAdded.resources
+C:\Users\scott.carnegie.ORANGUTECH\Source\Workspaces\Workspace\The 2r\The2r\obj\Debug\The2r.Migrations.EnrollmentAdded.resources
+C:\Users\scott.carnegie.ORANGUTECH\Source\Workspaces\Workspace\The 2r\The2r\obj\Debug\The2r.Migrations.UpdateActivityLocationDetails.resources
+C:\Users\scott.carnegie.ORANGUTECH\Source\Workspaces\Workspace\The 2r\The2r\obj\Debug\The2r.Migrations.ActivityAttendance.resources
+C:\Users\scott.carnegie.ORANGUTECH\Source\Workspaces\Workspace\The 2r\The2r\obj\Debug\The2r.Migrations.NullableActivityAttendance.resources
+C:\Users\scott.carnegie.ORANGUTECH\Source\Workspaces\Workspace\The 2r\The2r\obj\Debug\The2r.Migrations.ActivitySubscriptionAdded.resources
+C:\Users\scott.carnegie.ORANGUTECH\Source\Workspaces\Workspace\The 2r\The2r\obj\Debug\The2r.Migrations.CreateAdmin.resources
+C:\Users\scott.carnegie.ORANGUTECH\Source\Workspaces\Workspace\The 2r\The2r\obj\Debug\The2r.Migrations.AddUserCity.resources
+C:\Users\scott.carnegie.ORANGUTECH\Source\Workspaces\Workspace\The 2r\The2r\obj\Debug\The2r.Migrations.AddMapUrltoActivity.resources
+C:\Users\scott.carnegie.ORANGUTECH\Source\Workspaces\Workspace\The 2r\The2r\obj\Debug\The2r.Migrations.PlaceIdAdded.resources
+C:\Users\scott.carnegie.ORANGUTECH\Source\Workspaces\Workspace\The 2r\The2r\obj\Debug\The2r.csproj.GenerateResource.Cache

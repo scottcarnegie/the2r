@@ -1,0 +1,230 @@
+﻿@model The2r.Models.IndexViewModel
+@{
+    ViewBag.Title = "Settings";
+}
+
+<h2>@ViewBag.Title.</h2>
+
+<p class="text-success">@ViewBag.StatusMessage</p>
+<hr />
+<div>
+
+    <h3>My Account</h3>
+    <p class="lead">General account settings.</p>
+    <div class="row">
+        <div class="col-md-6">
+            <form class="form-horizontal">
+                <div class="form-group">
+                    <label class="col-md-2 control-label">First Name</label>
+                    <div class="col-md-10">
+                        @Html.TextBoxFor(m => m.AppUser.FirstName, new { @class = "form-control", @readonly = "readonly" })
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-md-2 control-label">Last Name</label>
+                    <div class="col-md-10">
+                        @Html.TextBoxFor(m => m.AppUser.LastName, new { @class = "form-control", @readonly = "readonly" })
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-md-2 control-label">City</label>
+                    <div class="col-md-10">
+                        @Html.TextBoxFor(m => m.AppUser.City, new { @class = "form-control", @readonly = "readonly" })
+                    </div>
+                </div>
+            </form>
+        </div>
+        <div class="col-md-6 well">
+            <dl class="dl-horizontal">
+                <dt>Password:</dt>
+                <dd>
+                    @if (Model.HasPassword)
+            {
+                        @Html.ActionLink("Change your password", "ChangePassword")
+                    }
+                    else
+                    {
+                        @Html.ActionLink("Create", "SetPassword")
+                    }
+                </dd>
+                <dt>Notifications:</dt>
+                <dd>
+                    @if (Model.AppUser.SubscribeToEmail == true)
+            {
+                        <a class="notif-toggle" href="#">Disable email notifications.</a>
+                    }
+                    else
+                    {
+                        <a class="notif-toggle" href="#">Enable email notifications.</a>
+                    }
+                </dd>
+
+
+                @*<dt>External Logins:</dt>
+                    <dd>
+                        @Model.Logins.Count [
+                        @Html.ActionLink("Manage", "ManageLogins") ]
+                    </dd>*@
+                @*
+                    Phone Numbers can used as a second factor of verification in a two-factor authentication system.
+
+                     See <a href="http://go.microsoft.com/fwlink/?LinkId=403804">this article</a>
+                        for details on setting up this ASP.NET application to support two-factor authentication using SMS.
+
+                     Uncomment the following block after you have set up two-factor authentication
+                *@
+                @*
+                    <dt>Phone Number:</dt>
+                    <dd>
+                        @(Model.PhoneNumber ?? "None") [
+                        @if (Model.PhoneNumber != null)
+                        {
+                            @Html.ActionLink("Change", "AddPhoneNumber")
+                            @: &nbsp;|&nbsp;
+                            @Html.ActionLink("Remove", "RemovePhoneNumber")
+                        }
+                        else
+                        {
+                            @Html.ActionLink("Add", "AddPhoneNumber")
+                        }
+                        ]
+                    </dd>
+                *@
+                @*<dt>Two-Factor Authentication:</dt>
+                    <dd>
+                        <p>
+                            There are no two-factor authentication providers configured. See <a href="http://go.microsoft.com/fwlink/?LinkId=403804">this article</a>
+                            for details on setting up this ASP.NET application to support two-factor authentication.
+                        </p>
+                        @if (Model.TwoFactor)
+                            {
+                                using (Html.BeginForm("DisableTwoFactorAuthentication", "Manage", FormMethod.Post, new { @class = "form-horizontal", role = "form" }))
+                                {
+                                    @Html.AntiForgeryToken()
+                                    <text>Enabled
+                                    <input type="submit" value="Disable" class="btn btn-link" />
+                                    </text>
+                                }
+                            }
+                            else
+                            {
+                                using (Html.BeginForm("EnableTwoFactorAuthentication", "Manage", FormMethod.Post, new { @class = "form-horizontal", role = "form" }))
+                                {
+                                    @Html.AntiForgeryToken()
+                                    <text>Disabled
+                                    <input type="submit" value="Enable" class="btn btn-link" />
+                                    </text>
+                                }
+                            }
+                    </dd>*@
+            </dl>
+        </div>
+    </div>
+
+
+    <hr />
+</div>
+
+<div>
+    <h3>My Activities</h3>
+
+    <p class="lead">The selected activities will control what shows up in the activity feed.</p>
+
+    <div id="activityGrid">
+    </div>
+
+    <div style="width:100%; padding-top:25px;">
+        <button style="display:inline; padding-left:50px; padding-right:50px;" id="Save-Button" class="btn btn-primary">Update</button>
+    </div>
+</div>
+
+@section scripts{
+    <script>
+
+        var activityData = {};
+
+        $(document).ready(function () {
+
+            activityData = {
+                userId: "@Model.AppUser.Id",
+                subList: [],
+                searchVal: "",
+                setSubActive: function (activityType, isActive) {
+                    activityData.searchVal = activityType;
+                    var subscription = activityData.subList.find(activityData.getSubscription);
+                    subscription.isSubscribed = isActive;
+                },
+                getSubscription: function (element) {
+                    return element.name == activityData.searchVal;
+                }
+            };
+
+            $.ajax({
+                type: "GET",
+                url: "/api/subscriptions?userId=@Model.AppUser.Id",
+                success: function (data) {
+                    activityData.subList = data;
+                    jQuery.each(data, function () {
+                        if (!this.isSubscribed) {
+                            return $("#activityGrid").append("<img activity='" + this.name + "' class='btn activity-button' style='margin:15px; padding:15px; height:100px; width:100px;'src='" + window.location.protocol + "//" + window.location.host + "/Content/Images/Activities/" + this.name + ".png'/></button>");
+                        }
+                        return $("#activityGrid").append("<img activity='" + this.name + "' class='btn btn-success activity-button' style='margin:15px; padding:15px; height:100px; width:100px;'src='" + window.location.protocol + "//" + window.location.host + "/Content/Images/Activities/" + this.name + ".png'/></button>");
+                    });
+                },
+                error: function (data, url) {
+                    alert(data.id);
+                }
+            });
+
+            $("#activityGrid").on("click", ".activity-button", function () {
+                $("#Save-Button").css("display", "inline");
+                if ($(this).hasClass('btn-success')) {
+                    $(this).removeClass('btn-success');
+                    activityData.setSubActive($(this).attr("activity"), false)
+                }
+                else {
+                    $(this).addClass('btn-success');
+                    activityData.setSubActive($(this).attr("activity"), true)
+                }
+            });
+
+            $("#Save-Button").click(function () {
+
+                $("#Save-Button").css("display", "none");
+
+                $.ajax({
+                    type: "POST",
+                    url: "/api/subscriptions?userId=@Model.AppUser.Id",
+                    data: JSON.stringify(activityData.subList),
+                    contentType: 'application/json',
+                    success: function (data) {
+                        window.location.href = window.location.protocol + "//" + window.location.host;
+                    },
+                    error: function (data, url) {
+                        alert("Error updating activities. Please try again later.");
+                        location.reload();
+                    }
+                });
+            });
+
+            $(".notif-toggle").click(function () {
+                $.ajax({
+                    type: "PUT",
+                    url: "/api/accounts?userId=@Model.AppUser.Id&email=@Model.AppUser.Email",
+                    success: function (data) {
+                        if (data == true) {
+                            $(".notif-toggle").html("Disable email notifications.")
+                        }
+                        else {
+                            $(".notif-toggle").html("Enable email notifications.")
+                        }
+                    },
+                    error: function (data) {
+                        alert("Error updating notifications.");
+                    }
+                });
+            });
+
+        });
+    </script>
+}

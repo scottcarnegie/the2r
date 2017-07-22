@@ -1,0 +1,61 @@
+﻿@using The2r.Models
+@model LoginViewModel
+@{
+    ViewBag.Title = "The 2r";
+}
+
+<h2>@ViewBag.Title.</h2>
+<div class="row">   
+    <div class="col-md-6">
+        <h4>Sign in.</h4>
+        <p>If you are new to The 2r, click to @Html.ActionLink("join", "Register")!</p>
+        <section id="loginForm">
+            @using (Html.BeginForm("Login", "Account", new { ReturnUrl = ViewBag.ReturnUrl }, FormMethod.Post, new { @class = "form-horizontal", role = "form" }))
+            {
+                @Html.AntiForgeryToken()
+                <hr />
+                @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+                <div class="form-group">
+                    @Html.LabelFor(m => m.Email, new { @class = "col-md-2 control-label" })
+                    <div class="col-md-10">
+                        @Html.TextBoxFor(m => m.Email, new { @class = "form-control" })
+                        @Html.ValidationMessageFor(m => m.Email, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+                <div class="form-group">
+                    @Html.LabelFor(m => m.Password, new { @class = "col-md-2 control-label" })
+                    <div class="col-md-10">
+                        @Html.PasswordFor(m => m.Password, new { @class = "form-control" })
+                        @Html.ValidationMessageFor(m => m.Password, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="col-md-offset-2 col-md-10">
+                        <div class="checkbox" style="margin-left:25px;">
+                            @Html.CheckBoxFor(m => m.RememberMe)
+                            @Html.LabelFor(m => m.RememberMe)
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="col-md-offset-2 col-md-10">                     
+                        <input type="submit" value="Log in" class="btn btn-primary" />
+                        @Html.ActionLink("Forgot your password?", "ForgotPassword", null, new { @style = "margin-left:20px;" })
+                    </div>
+                </div>
+            }
+        </section>
+    </div>
+    <div class="col-md-6">
+        <h3>Find your next level...</h3>
+        <hr/>
+        <section id="2r-Info">
+            <p>Join your local athletic community to meet new training partners, techniques, routes and more! Use the 2r to join group activities in your area, or lead an activity of your own!</p>
+            <img style="max-width:100%; max-height:100%;" src="~/Content/Images/Login/2r_landing.jpg" />
+        </section>
+    </div>
+</div>
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+}

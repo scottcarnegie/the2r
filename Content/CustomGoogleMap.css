@@ -1,0 +1,8 @@
+﻿#infowindow-content .title {
+  font-weight: bold;
+}
+
+
+#map #infowindow-content {
+  display: inline;
+}

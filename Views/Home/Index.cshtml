@@ -1,0 +1,239 @@
+﻿@model The2r.Models.ActivitiesViewModel
+
+@{
+    ViewBag.Title = "Home";
+}
+
+@section AddToHead{
+    <link href="@Url.Content("~/Content/Home.css")" rel="stylesheet" type="text/css" />
+}
+
+<div id="banner" style="height:250px; width:100%; overflow:hidden; position:relative; z-index:0; text-align:center;" >
+    <div style="position:absolute; z-index:-1; top:0px; margin:auto; width:100%;">
+        <img style="margin-left:-50%; margin-right:-50%;" src="~/Content/Images/Home/snowshoe.jpg" />
+    </div>
+    <div style="height:100%; position:absolute; left:0px; z-index:1000; text-align:left; padding:50px; vertical-align:middle;">
+        <p id="banner-text">
+            If you want to go fast, go alone.<br />  
+            If you want to go far, go together.<br />
+            &nbsp;&nbsp;&nbsp;-&nbsp;&nbsp;&nbsp;<i>African Proverb</i>
+        </p>
+    </div>
+    
+</div>
+<div id="next-up-details" class="row">
+    <div class="col-md-6" style="padding:0px; margin:0px; height:100%;">
+        <div class="card">
+            <div class="pane-heading-text">Next up...</div>
+            <div id="eventType" style="width:100%; text-align:center">              
+            </div>
+            <form class="form-horizontal" style="padding:15px">
+                <div class="form-group">
+                    <label for="Name" class="col-xs-3 control-label">Name</label>
+                    <div class="col-xs-9">
+                        <input readonly type="text" class="form-control" style="max-width:80%" id="Name" placeholder="">
+                    </div>
+                    <label for="Date" class="col-xs-3 control-label">Date</label>
+                    <div class="col-xs-9">
+                        <input readonly type="text" class="form-control" style="max-width:80%" id="Date" placeholder="">
+                    </div>
+                    <label for="StartTime" class="col-xs-3 control-label">Time</label>
+                    <div class="col-xs-9">
+                        <input readonly type="text" class="form-control" style="max-width:80%" id="StartTime" placeholder="">
+                    </div>
+                </div>
+                <div style="width:100%; text-align:center;">
+                    <button id="event-btn" style="margin: 20px 0;" class="btn" type="button">Go to Event!</button>
+                </div>
+            </form>
+        </div>
+    </div>          
+    <div class="col-md-6" style="padding:0px; margin:0px">
+        <div id="next-up-map" class="card">           
+        </div>
+    </div>  
+</div>
+<div id="no-event-info" class="row" hidden>
+    <div class="col-md-12" style="padding:0px; margin:0px; height:100%;">
+        <div class="card">
+            <div class="pane-heading-text">Next up...</div>
+            <div style="width:100%; text-align:center">
+                <img style='margin:15px; height:80px; width:80px;' src='/Content/Images/Icons/no-event.png' />
+            </div>
+            <div class="pane-heading-text" style="width:100%; text-align:center">
+                You have no scheduled activities.
+            </div>
+        </div>
+    </div>
+</div>
+<div class="row">
+    <div id="upcoming-events" class="col-md-12" style="padding:0px; margin:0px">
+        <div class="card">
+            <div style="width:100%;">
+                <div class="pane-heading-text" style="width:auto; display:inline-block">Upcoming Events</div>
+                 @Html.ActionLink("Join Events", "Index", "Activities", new { } , new { @class = "btn btn-primary", @style = "display:inline-block; float:right; margin:15px;" })
+            </div>
+            
+            <table id="eventTable" class="display responsive nowrap table table-striped" style="font-size:15px; font-family: 'Indie Flower', regular; width:100%" cellspacing="0">
+                <thead style="">
+                    <tr>
+                        <th>Name</th>
+                        <th></th>
+                        <th>Date</th>
+                        <th>Time</th>
+                        <th>Enrollment</th>
+                        <th>Location</th>
+                    </tr>
+                </thead>
+            </table>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    @*<div class="col-md-4">
+        <h2>Featured Event #1</h2>
+        <p>
+            Description of featured Event #1
+        </p>
+        <p><a class="btn btn-default" href="http://go.microsoft.com/fwlink/?LinkId=301865">Learn more &raquo;</a></p>
+    </div>
+    <div class="col-md-4">
+        <h2>Featured Event #2</h2>
+        <p>
+            Description of featured Event #2
+        </p>
+        <p><a class="btn btn-default" href="http://go.microsoft.com/fwlink/?LinkId=301866">Learn more &raquo;</a></p>
+    </div>*@
+    <div class="col-md-12">
+        <h4 style="font-family:'Indie Flower', regular; padding-top:15px;">Help me!</h4>
+        <form id="newActivityForm" style="width:100%;">        
+            <p>Please take a moment to provide some feedback: anything from styling or content to wanted features!</p>
+            <textarea id="feedback-text" class="well" style="max-width:100%; width:100%;" name="Feedback" rows="3"></textarea>
+        </form>
+        <button id="send-feedback-btn" type="button" style="padding:7px 25px 7px 25px" class="btn btn-info">Send</button>
+        <div id="feedback-response" class="text-success"></div>
+    </div>
+</div>
+                    
+@section scripts{
+
+    <script>
+
+        $(document).ready(
+            function () {
+
+                var eventData = {};
+
+                var UpdateUpNext = function (dataO) {
+
+                    if (dataO[0] != null) {
+                        var sdate = (Date.parse(dataO[0].activity.eventStart)).toString('yyyy-MM-dd');
+                        var stime = (Date.parse(dataO[0].activity.eventStart)).toString('hh:mm tt');
+
+                        $("#Name").val(dataO[0].activity.name);
+                        $("#Date").val(sdate);
+                        $("#StartTime").val(stime);
+
+                        $("#next-up-map").html("<iframe src='https://www.google.com/maps/embed/v1/place?key=AIzaSyAqsHRlV0S1-f07OLl4kthKsYWt_8UtnGg&q=place_id:" + dataO[0].activity.placeId + "' style='width:100%; height:400px;' frameborder='0' allowfullscreen></iframe>")
+
+                        $("#eventType").html("<img style='margin:15px; height:80px; width:80px;' src='/Content/Images/Activities/" + dataO[0].activity.activityType.name + ".png' />")
+
+                        $("#event-btn").click(function () {
+                            location.href = window.location.protocol + "//" + window.location.host + "/Activities/Details/" + dataO[0].activity.id
+                        });
+                    }
+                    else {
+                        $("#no-event-info").show();
+                        $("#next-up-details").hide();                      
+                    }
+                  
+                };
+
+                var UpdateDataTable = function (dataO) {
+                    $('#eventTable').DataTable({
+                        paging: false,
+                        ordering: false,
+                        info: false,
+                        searching: false,
+                        data: dataO,
+                        columns: [
+                            {
+                                width: "300px",
+                                data: "activity.name",
+                                render: function (data, type, enrollment) {
+                                    if ("@Model.User.Id" == enrollment.activity.applicationUserId) {
+                                        return "<a href='" + window.location.protocol + "//" + window.location.host + "/Activities/Edit/" + enrollment.activity.id + "'>" + enrollment.activity.name + "</a>";
+                                    }
+                                    else {
+                                        return "<a href='" + window.location.protocol + "//" + window.location.host + "/Activities/Details/" + enrollment.activity.id + "'>" + enrollment.activity.name + "</a>";
+                                    }
+                                }
+                            },
+                            {
+                                width: "50px",
+                                data: "activity.activityType.name",
+                                render: function (data) {
+                                    return "<img style='height:20px; width:20px;' src='" + window.location.protocol + "//" + window.location.host + "/Content/Images/Activities/" + data + ".png'/>";
+                                }
+                            },
+                            {
+                                width: "80px",
+                                data: "activity.eventStart",
+                                render: function (data) {
+                                    var sdate = Date.parse(data);
+                                    return sdate.toString('yyyy-MM-dd');
+                                }
+                            },
+                            {
+                                width: "80px",
+                                data: "activity.eventStart",
+                                render: function (data) {
+                                    var sdate = Date.parse(data);
+                                    return sdate.toString('hh:mm tt');
+                                }
+                            },
+                            {
+                                width: "80px",
+                                data: "activity.currentEnrollment"
+                            },
+                            {
+                                data: "activity.name",
+                                render: function (data, type, enrollment) {
+                                    return enrollment.activity.locationName;
+                                }
+                            }
+
+                        ]
+                    });
+                }
+
+                $.ajax({
+                    type: "GET",
+                    url: "/api/enrollments?applicationUserId=@Model.User.Id&onlyActive=true",
+                    success: function (data) {
+                        UpdateUpNext(data);
+                        UpdateDataTable(data);
+                    }
+                });
+
+                $("#send-feedback-btn").click(function () {
+
+                    // Use API to send email to me.
+
+                    $("#send-feedback-btn").css("display", "none");
+                    $("#feedback-text").attr("disabled", "disabled");
+                    $("#feedback-response").html("<b>Thanks for the help!</b>");
+                });
+
+                
+
+                // Function to get all events user is subscribed to
+
+
+                // Function to get next event
+
+
+            });
+    </script>
+}

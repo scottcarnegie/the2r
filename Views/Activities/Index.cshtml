@@ -1,0 +1,151 @@
+﻿@model The2r.Models.ActivitiesViewModel
+@{
+    ViewBag.Title = "Activities";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>The 2r</h2>
+
+@Html.ActionLink("New 2r", "New", "Activities", null, new { @class = "btn btn-success", @style = "display:inline-block; float:right;" })
+
+<h3>My Activities</h3>
+
+<table id="enrollmentTable" class="display responsive nowrap table table-striped" style="width:100%">
+    <thead>
+        <tr>
+            <th>Name</th>
+            <th>Type</th>
+            <th>Date</th>
+            <th>Time</th>
+            <th>Description</th>
+            <th>Enrollment</th>
+            <th>Difficulty</th>
+        </tr>
+    </thead>
+</table>
+
+<h3>Find Your 2r!</h3>
+
+<table id="activityTable" class="display responsive nowrap table table-striped" style="width:100%">
+    <thead>
+        <tr>
+            <th>Name</th>
+            <th>Type</th>
+            <th>Date</th>
+            <th>Time</th>
+            <th>Description</th>
+            <th>Enrollment</th>
+            <th>Difficulty</th>
+        </tr>
+    </thead>
+</table>
+
+@section scripts{
+    <script>
+        $(document).ready(function () {
+
+            $('#enrollmentTable').DataTable({
+                paging: false,
+                ordering: false,
+                info: false,
+                searching:false,
+
+                ajax: {
+                    url: "/api/enrollments?applicationUserId=@Model.User.Id&onlyActive=true",
+                    dataSrc: ""
+                },
+                columns: [
+                    {
+                        data: "activity.name",
+                        render: function (data, type, enrollment) {
+                            if ("@Model.User.Id" == enrollment.activity.applicationUserId) {
+                                return "<a href='" + window.location.protocol + "//" + window.location.host + "/Activities/Edit/" + enrollment.activity.id + "'>" + enrollment.activity.name + "</a>";
+                            }
+                            else {
+                                return "<a href='" + window.location.protocol + "//" + window.location.host + "/Activities/Details/" + enrollment.activity.id + "'>" + enrollment.activity.name + "</a>";
+                            }
+                        }
+                    },
+                    {
+                        data: "activity.activityType.name",
+                        render: function (data) {
+                            return "<img style='height:20px; width:20px;' src='" + window.location.protocol + "//" + window.location.host + "/Content/Images/Activities/" + data + ".png'/>";
+                        }
+                    },
+                    {
+                        data: "activity.eventStart",
+                        render: function (data) {
+                            var sdate = Date.parse(data);
+                            return sdate.toString('yyyy-MM-dd');
+                        }
+                    },
+                    {
+                        data: "activity.eventStart",
+                        render: function (data) {
+                            var sdate = Date.parse(data);
+                            return sdate.toString('hh:mm tt');
+                        }
+                    },
+                    { data: "activity.description" },
+                    { data: "activity.currentEnrollment" },
+                    { data: "activity.difficulty" }
+                    
+                ]
+
+            });
+
+            $('#activityTable').DataTable({
+                paging: false,
+                ordering: false,
+                info: false,
+
+                ajax: {
+                    url: "/api/activities",
+                    dataSrc: ""
+                },
+                columns: [
+                    {
+                        data: "name",
+                        render: function (data, type, activity) {
+                            if ("@Model.User.Id" == activity.applicationUser.id) {
+                                return "<a href='" + window.location.protocol + "//" + window.location.host + "/Activities/Edit/" + activity.id + "'>" + activity.name + "</a>";
+                            }
+                            else {
+                                return "<a href='" + window.location.protocol + "//" + window.location.host + "/Activities/Details/" + activity.id + "'>" + activity.name + "</a>";
+                            } 
+                        }
+                    },
+                    {
+                        data: "activityType.name",
+                        render: function (data) {
+                            return "<img style='height:20px; width:20px;' src='" + window.location.protocol + "//" + window.location.host + "/Content/Images/Activities/" + data + ".png'/>";
+                        }
+                    },
+                    {
+                        data: "eventStart",
+                        render: function (data) {
+                            var sdate = Date.parse(data);
+                            return sdate.toString('yyyy-MM-dd');
+                        }
+                    },
+                    {
+                        data: "eventStart",
+                        render: function (data) {
+                            var sdate = Date.parse(data);
+                            return sdate.toString('hh:mm tt');
+                        }
+                    },
+                    { data: "description" },
+                    { data: "currentEnrollment" },
+                    { data: "difficulty" }
+                   
+            ]
+
+        });
+
+        });
+
+    </script>
+
+
+}

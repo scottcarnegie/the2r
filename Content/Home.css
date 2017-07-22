@@ -1,0 +1,35 @@
+﻿
+#banner{
+    box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.2), 0 3px 10px 0 rgba(0, 0, 0, 0.1);
+}
+
+#banner-text {
+    line-height:55px; 
+    font-size:40px;
+    font-family: 'Homemade Apple', cursive; 
+    color:white
+}
+
+.pane-heading-text{
+    font-size: 25px;
+    font-family: 'Indie Flower', regular;
+    color:black;
+    width:100%;
+    padding:10px;
+}
+
+@media only screen and (max-width: 1000px) {
+    #banner-text {
+        line-height: 30px;
+        font-size: 15px;
+        font-family: 'Homemade Apple', cursive; 
+        color:white
+    }
+}
+
+.card{
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+    padding:0;
+    margin:15px;
+    
+}

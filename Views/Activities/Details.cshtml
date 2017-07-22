@@ -1,0 +1,148 @@
+﻿@model The2r.Models.ActivityDetailsViewModel
+@{
+    ViewBag.Title = "Details";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>@Model.Activity.Name</h2>
+
+<div style="padding:25px;">
+    <a id="btn-join" class='btn btn-primary' style='margin:3px'>I'm in!</a>
+    <a class='btn' style='margin:3px' href='../'>Back</a>
+</div>
+
+<form id="newActivityForm">
+
+    <div class="row">
+        <div class="col-md-6">
+            <div class="form-group">
+                @Html.LabelFor(m => m.Activity.Name)
+                <input class="form-control" name="Name" type="text" value="@Model.Activity.Name" readonly>
+            </div>
+            <div class="form-group">
+                <label>Activity Type</label>
+                <input class="form-control" name="ActivityType" type="text" value="@Model.Activity.ActivityType.name" readonly>
+            </div>
+            <div class="form-group">
+                <label>2r Guide</label>
+                <input class="form-control" style="max-width:100%;" name="ActivityType" type="text" value="@Model.Activity.ApplicationUser.FirstName @Model.Activity.ApplicationUser.LastName, @Model.Activity.ApplicationUser.City" readonly>
+            </div>
+            <div class="form-group">
+                @Html.LabelFor(m => m.Activity.EventStart)
+                <input type='text' class="form-control" name="EventStart" value="@Model.Activity.EventStart" readonly/>
+            </div>
+            <div class="form-group">
+                @Html.LabelFor(m => m.Activity.Description)
+                <textarea style="max-width:100%" class="form-control" data-val="true" data-val-required="The Description field is required." name="Description" type="text" rows="3" readonly>@Model.Activity.Description</textarea>
+            </div>
+            <div class="form-group">
+                @Html.LabelFor(m => m.Activity.Difficulty)
+                <div style="padding-top:10px">
+                    <input class="form-control slider" style="width:280px;" name="Difficulty" data-slider-id='minAttSlider' type="number" data-slider-min="0" data-slider-max="10" data-slider-step="1" data-slider-value="@Model.Activity.Difficulty" data-slider-enabled="false" />
+                </div>
+            </div>         
+        </div>
+        <div class="col-md-6">
+            <div style="width:100%; text-align:center">
+                <img style='display:inline-block; height:100px; width:100px;' src='/Content/Images/Icons/group.png' />
+                <div style="display:inline-block; line-height:100px; font-size:60px; vertical-align:middle;">@Model.Activity.CurrentEnrollment</div>
+            </div>
+            <div id="advanced-options" style="display:none;">
+                <div class="form-group">
+                    @Html.LabelFor(m => m.Activity.MinimumAttendees)
+                    <input class="form-control" data-val="true" data-val-number="The field Minimum Enrollment must be a number." name="MinimumAttendees" type="number" value="@Model.Activity.MinimumAttendees" readonly>
+                </div>
+                <div class="form-group">
+                    @Html.LabelFor(m => m.Activity.MaximumAttendees)
+                    <input class="form-control" data-val="true" data-val-number="The field Maximum Enrollment must be a number." name="MaximumAttendees" type="number" value="@Model.Activity.MaximumAttendees" readonly>
+                </div>            
+            </div>
+            <div style="max-width:100%" class="form-group">
+                <hr/>
+                <div>
+                    <iframe src="https://www.google.com/maps/embed/v1/place?key=AIzaSyAqsHRlV0S1-f07OLl4kthKsYWt_8UtnGg&q=place_id:@Model.Activity.PlaceId" style="width:100%; height:350px;" frameborder="0" allowfullscreen></iframe>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
+
+@section scripts{
+
+    @{ 
+        var jsonEnroll = "";
+    }
+
+    <script>
+        $(document).ready(function () {
+            
+            $('.slider').slider({});
+
+            @if(Model.Enrollment.Id != 0 && Model.Enrollment.IsActive == true)
+            {
+                <text>
+                    $("#btn-join").removeClass("btn-primary");
+                    $("#btn-join").addClass("btn-danger");
+                    $("#btn-join").html("Sorry! Can't make it.")
+                </text>
+            }
+
+
+            $("#btn-join").click(function () {
+
+                if(@Model.Enrollment.Id == 0){
+
+                    @{
+                        jsonEnroll = new System.Web.Script.Serialization.JavaScriptSerializer().Serialize(Model.Enrollment);
+                    }
+
+                    $.ajax({
+                        type: "POST",
+                        url: "/api/enrollments",
+                        data: '@Html.Raw(jsonEnroll)',
+                        contentType: "application/json",
+                        success: function (data) {                            
+                            window.location.href = window.location.protocol + "//" + window.location.host + "/Activities";
+                        },
+                        error: function (data, url) {
+                            alert(data.toString());
+                        }
+                    });
+                }
+                else{
+
+                    @{
+                        if(Model.Enrollment.IsActive == true)
+                        {
+                            Model.Enrollment.IsActive = false;
+                        }
+                        else
+                        {
+                            Model.Enrollment.IsActive = true;
+                        }
+                        jsonEnroll = new System.Web.Script.Serialization.JavaScriptSerializer().Serialize(Model.Enrollment);
+                    }
+
+
+                    $.ajax({
+                        type: "PUT",
+                        url: "/api/enrollments/" + @Model.Enrollment.Id,
+                        data: '@Html.Raw(jsonEnroll)',
+                        contentType: "application/json",
+                        success: function (data) {
+                            window.location.href = window.location.protocol + "//" + window.location.host + "/Activities";
+                        },
+                        error: function (data, url) {
+                            alert(data.toString());
+                        }
+                    });
+                }
+
+
+            });
+        });
+
+    </script>
+        
+    
+}

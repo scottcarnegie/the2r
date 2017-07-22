@@ -1,0 +1,249 @@
+﻿
+@model The2r.Models.ActivityUpdateViewModel
+@{
+    ViewBag.Title = "Activity";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@if (Model.activity.Id == 0)
+{
+    <h2>New Activity</h2>
+}
+else
+{
+    <h2>Edit Activity</h2>
+}
+
+<form id="newActivityForm">
+
+    <div class="row">
+        <div class="col-md-6">
+            <div class="form-group">
+                @Html.LabelFor(m => m.activity.Name)
+                <input class="form-control" data-val="true" data-val-required="The Name field is required." name="Name" type="text" value="@Model.activity.Name">
+            </div>
+            <div class="form-group">
+                @Html.LabelFor(m => m.activity.ActivityTypeId)
+                <select class="form-control" name="ActivityTypeId">
+                    <option value=""></option>
+                    @foreach (var at in Model.activityTypes)
+                    {
+                        if (at.Id == Model.activity.ActivityTypeId)
+                        {
+                            <option value="@at.Id" selected="selected">@at.Name</option>
+                        }
+                        else
+                        {
+                            <option value="@at.Id">@at.Name</option>
+                        }
+                    }
+                </select>
+            </div>
+            <div class="form-group">
+                @Html.LabelFor(m => m.activity.Description)
+                <textarea style="max-width:100%" class="form-control" data-val="true" data-val-required="The Description field is required." name="Description" type="text" rows="3">@Model.activity.Description</textarea>
+            </div>
+            <div class="form-group">
+                @Html.LabelFor(m => m.activity.EventStart)
+                <div class="container" style="padding:0px;margin:0px;">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <input type='text' data-val="true" data-val-required="The Date field is required." class="form-control datetimepicker" name="EventStart" value="@Model.activity.EventStart" />
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="form-group">
+                <label>Where is the event?</label>
+                <a href="#" id="updateLocation" style="margin-left:25px;" class="text-warning location-edit">Update Location</a>
+                <input class="form-control location-new" data-val="true" data-val-required="The location is required." id="locationSearch" type="text" value="">
+                <div id="map" class="location-new" style="height:250px; max-width:100%;"></div>
+                <div id="infowindow-content" class="location-new">
+                    <span id="place-name" class="title"></span><br>
+                    <span id="place-address"></span>
+                </div>
+                <input class="form-control location-edit" style="max-width:100%" id="LocationName" name="LocationName" type="text" value="@Model.activity.LocationName" readonly>
+                <input class="form-control location-edit" style="max-width:100%" id="Address" name="Address" type="text" value="@Model.activity.Address" readonly>
+                <a class="location-edit" target="_blank" href="@Model.activity.MapUrl"><input class="form-control" style="max-width:100%" id="MapUrl" name="MapUrl" type="url" value="@Model.activity.MapUrl" readonly></a>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="form-group">
+                <div class="col-xs-2 col-md-2 control-label">
+                    <input id="isRestricted" type="checkbox" value="false">
+                </div>
+                <label class="col-xs-10 col-md-10">Show Advanced Options</label>
+            </div>
+            <div id="advanced-options" style="display:none;">
+                <div class="form-group">
+                    @Html.LabelFor(m => m.activity.MinimumAttendees)
+                    <input class="form-control" data-val="true" data-val-number="The field Minimum Enrollment must be a number." name="MinimumAttendees" type="number" value="@Model.activity.MinimumAttendees">
+                </div>
+                <div class="form-group">
+                    @Html.LabelFor(m => m.activity.MaximumAttendees)
+                    <input class="form-control" data-val="true" data-val-number="The field Maximum Enrollment must be a number." name="MaximumAttendees" type="number" value="@Model.activity.MaximumAttendees">
+                </div>
+                <div class="form-group">
+                    @Html.LabelFor(m => m.activity.Difficulty)
+                    <div style="padding-top:10px">
+                        <input class="form-control slider" style="width:280px;" name="Difficulty" data-slider-id='minAttSlider' type="number" data-slider-min="0" data-slider-max="10" data-slider-step="1" data-slider-value="@Model.activity.Difficulty" />
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <button id="submitbtn" style="margin-top:25px;" type="submit" class="btn btn-primary">Submit</button>
+    <button id="cancelbtn" style="margin-top:25px;" type="button" class="btn">Cancel</button>
+    <button id="deletebtn" style="margin-top:25px;" type="button" class="btn btn-danger location-edit">Delete</button>
+
+    <div class="form-group">
+        <input data-val="false" data-val-number="The field Id must be a number." data-val-required="The Id field is required." name="Id" type="hidden" value=@Model.activity.Id>
+        <input data-val="false" data-val-date="The field Created On must be a date." data-val-required="The Created On field is required." name="CreatedOn" type="hidden" value=@Model.activity.CreatedOn>
+        <input data-val="false" data-val-date="The field ModifiedOn must be a date." data-val-required="The ModifiedOn field is required." name="ModifiedOn" type="hidden" value=@Model.activity.ModifiedOn>
+        <input id="activity_ApplicationUserId" name="ApplicationUserId" type="hidden" value=@Model.activity.ApplicationUserId>
+
+        
+        <input class="form-control" id="Latitude" name="Latitude" type="hidden" value="@Model.activity.Latitude">
+        <input class="form-control" id="Longitude" name="Longitude" type="hidden" value="@Model.activity.Longitude">
+        <input class="form-control" id="PlaceId" name="PlaceId" type="hidden" value="@Model.activity.PlaceId">
+        <input class="form-control" id="CurrentEnrollment" name="CurrentEnrollment" type="hidden" value="@Model.activity.CurrentEnrollment">          
+        <input data-val="false" data-val-required="The IsActive field is required." name="IsActive" type="hidden" value="@Model.activity.IsActive.ToString()">
+
+    </div>
+
+</form>
+
+@Scripts.Render("~/bundles/CustomMap")
+
+@section scripts{
+
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAqsHRlV0S1-f07OLl4kthKsYWt_8UtnGg&libraries=places&callback=initMap" async defer></script>
+    <script>
+
+        $(document).ready(
+
+            function () {
+
+                $('#isRestricted').change(function() {
+                    if (this.checked) {
+                        $("#advanced-options").css("display","inline");
+                    } else {
+                        $("#advanced-options").css("display","none");
+                    }
+                });
+
+                $('.slider').slider({});
+
+                var initializeDTP = function(bool) {
+                    $('.datetimepicker').datetimepicker({
+                        sideBySide: true
+                    });
+                    return bool
+                }
+
+                var setDate = function(bool){
+                    $('.datetimepicker').data("DateTimePicker").date(new Date("@Model.activity.EventStart"));
+                }
+
+                setDate(initializeDTP(true));
+
+                $("#cancelbtn").click(function(){
+                    window.location.href= window.location.protocol + "//" + window.location.host + "/Activities";
+                });
+
+                @if(Model.activity.Id == 0)
+                {
+                <text>
+                $(".location-edit").css("display","none");
+
+                $("#newActivityForm").submit(function (e) {
+
+                    $("#submitbtn").attr('disabled','disabled');
+
+                    e.preventDefault();
+
+                    $.ajax({
+                        type: "POST",
+                        url: "/api/activities",
+                        data: $("#newActivityForm").serialize(),
+                        success: function (data) {
+                            CreateEnrollment(data.id);
+                        },
+                        error: function (data,url) {
+                            alert(data.id);
+                        }
+                    });
+
+                });
+
+                function CreateEnrollment(a_id){
+                    var newEnrollment = {
+                        id:0,
+                        applicationUserId:"@Model.activity.ApplicationUserId",
+                        activityId:a_id,
+                        isActive:true
+                    }
+
+                    $.ajax({
+                        type: "POST",
+                        url: "/api/enrollments",
+                        data: newEnrollment,
+                        success: function (data) {
+                            window.location.href= window.location.protocol + "//" + window.location.host + "/Activities";
+                        },
+                        error: function (data,url) {
+                            alert(data.id);
+                        }
+                    });
+                }
+                </text>
+                }
+                else
+                {
+                <text>
+
+                $(".location-new").css("display","none");
+
+                $("#updateLocation").click(function(){
+                    $(".location-edit").css("display","none");
+                    $(".location-new").css("display","block");
+                    initMap();
+                });
+
+                $("#deletebtn").click(function () {
+                    $.ajax({
+                        type: "DELETE",
+                        url: "/api/activities?id=" + @Model.activity.Id + "&username=@Model.activity.ApplicationUser.UserName",
+                        success: function (data) {
+                            window.location.href= window.location.protocol + "//" + window.location.host + "/Activities";
+                        },
+                        error: function (data, url) {
+                            alert(data.toString());
+                        }
+                    });
+                });
+
+                $("#newActivityForm").submit(function (e) {
+
+                    e.preventDefault();
+
+                    $.ajax({
+                        type: "PUT",
+                        url: "/api/activities/"+ @Model.activity.Id,
+                        data: $("#newActivityForm").serialize(),
+                        success: function (data) {
+                            window.location.href= window.location.protocol + "//" + window.location.host + "/Activities";
+                        },
+                        error: function (data,url) {
+                            alert(data.toString() + " " + url);
+                        }
+                    });
+
+                });
+                </text>
+                }
+
+            });
+    </script>
+}
